@@ -56,18 +56,3 @@ def format_dict(data: dict) -> str:
         result += f"\n f{key}: {value}"
     result = result.replace('\n', '', 1)
     return result
-    
-
-if __name__ == "__main__":
-    print(format_chat_history([
-        {
-            "id": 1,
-            "user": False,
-            "message": "Olá, sou a IA falando"
-        },
-        {
-            "id": 2,
-            "user": True,
-            "message": "Olá, sou o lead falando"
-        }
-    ]))

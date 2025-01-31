@@ -1,11 +1,13 @@
 from pathlib import Path
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
+# Enviroment variables
+OPENAI_API_KEY         = config("OPENAI_API_KEY")
+CALLMEBOT_API_URL      = config("CALLMEBOT_API_URL")
+CALLMEBOT_PHONE_NUMBER = config("CALLMEBOT_PHONE_NUMBER")
+CALLMEBOT_API_KEY      = config("CALLMEBOT_API_KEY")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-%0c+ww_$(6k2jzt+$ninca@+hw#&!8zrai6u5uz!#*#%ump_&o'
@@ -14,7 +16,6 @@ SECRET_KEY = 'django-insecure-%0c+ww_$(6k2jzt+$ninca@+hw#&!8zrai6u5uz!#*#%ump_&o
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 

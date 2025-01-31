@@ -1,7 +1,7 @@
 from typing import Annotated, TypedDict
 
 
-class State(TypedDict):
+class ChatbotState(TypedDict):
     model_physics_characteristics: Annotated[str, "Características físicas da pesssoa"]
     model_info: Annotated[str, "Características emocionais, de personalidade e comportamentais da pesssoa"]
     chat_history: Annotated[list, "Histórico de mensagens"]

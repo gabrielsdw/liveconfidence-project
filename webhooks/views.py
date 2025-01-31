@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
+from services.callmebot import CallMeBot
 from ai.workflows import ChatBotWorkflow
 from ai.utils import format_dict
 from . import serializers
@@ -9,6 +10,10 @@ from . import serializers
 
 class ChatbotWebhookApiView(APIView):
     
+    def __init__(self, **kwargs):
+        self.__callmebot_service = CallMeBot()
+        super().__init__(**kwargs)
+
     def post(self, request: Request) -> Response:
         data = request.data
         
@@ -41,6 +46,20 @@ class ChatbotWebhookApiView(APIView):
                 "model_info": model_info_formatted ,
                 "model_physics_characteristics": model_physics_characteristics_formatted,
             })
+
+            callmebot_message = f"""
+                CHAT HISTORY
+                {str(list(serializer.validated_data.get('chat_history')))}
+
+                AGENT RESPONSE
+                {response.get('agent_response')}
+                
+                FINAL RESPONSE            
+                {response.get('final_response')}                
+            """
+
+            self.__callmebot_service.send_message(callmebot_message)
+
             print("------------------------------ AGENT RESPONSE ------------------------------")
             print(response.get('agent_response'))
             print("------------------------------ END AGENT RESPONSE ------------------------------")

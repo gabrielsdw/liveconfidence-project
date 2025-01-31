@@ -42,12 +42,3 @@ Resposta vinda do outro modelo de IA:
 
 AGORA COMECE!
 """
-
-"""
-class State(TypedDict):
-    physical_characteristics: Annotated[str, "Características físicas da pesssoa"]
-    model_description: Annotated[str, "Características emocionais, de personalidade e comportamentais da pesssoa"]
-    chat_history: Annotated[list, "Histórico de mensagens"]
-    agent_response: Annotated[str, "Resposta do agente"]
-    final_response: Annotated[str, "Resposta do agente com a devida escrita de acordo com as características emocionais da descrição da pessoa"]
-"""
