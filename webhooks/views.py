@@ -1,10 +1,11 @@
+from random import randint
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from services.callmebot import CallMeBot
 from ai.workflows import ChatBotWorkflow
-from ai.utils import format_dict
+from ai.utils import format_dict, format_chat_history
 from . import serializers
 
 
@@ -46,19 +47,28 @@ class ChatbotWebhookApiView(APIView):
                 "model_info": model_info_formatted ,
                 "model_physics_characteristics": model_physics_characteristics_formatted,
             })
+            id = randint(0, 100)
 
-            callmebot_message = f"""
-                CHAT HISTORY
-                {str(list(serializer.validated_data.get('chat_history')))}
-
-                AGENT RESPONSE
-                {response.get('agent_response')}
+            chat_history_message = f"""
+            CHAT HISTORY - {id}
+            {format_chat_history(list(serializer.validated_data.get('chat_history')))}
+            """
                 
-                FINAL RESPONSE            
-                {response.get('final_response')}                
+            agent_message = f"""
+            AGENT RESPONSE - {id}
+            {response.get('agent_response')}
+               
+            """
+            final_response_message = f"""
+            FINAL RESPONSE - {id}           
+            
+            {response.get('final_response')}                
+            
             """
 
-            self.__callmebot_service.send_message(callmebot_message)
+            self.__callmebot_service.send_message(chat_history_message)
+            self.__callmebot_service.send_message(agent_message)
+            self.__callmebot_service.send_message(final_response_message)
 
             print("------------------------------ AGENT RESPONSE ------------------------------")
             print(response.get('agent_response'))
