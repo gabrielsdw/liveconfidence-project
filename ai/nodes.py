@@ -25,12 +25,16 @@ def characteristics_parser_node(state: State) -> dict:
 
     formatted_prompt = prompts.CHARACTERISCT_PARSER_PROMPT.format(
         response=state['agent_response'],
-        characteristics=state['characteristics_emotionals']
+        model_info=state['model_info'],
+        model_physics_characteristics=state['model_physics_characteristics']
     )
+    print("------------------------------ PROMPT FORMATADO ------------------------------")
+    print(formatted_prompt)
+    print("------------------------------ END PROMPT ------------------------------")
+    print('\n'*5)
     response = chain.invoke(formatted_prompt)
     return {"final_response": response}
     
-
 
 if __name__ == "__main__":
 

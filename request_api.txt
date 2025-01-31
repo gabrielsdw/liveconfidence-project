@@ -1,0 +1,39 @@
+*Url*
+  https://3d42-2804-1e68-c801-f9c-d605-3107-85ad-d2b1.ngrok-free.app
+
+*Rotas*
+  /api/v1/webhook/chatbot/ -> POST
+  
+  Body (Exemplo): {
+    "model": {
+        "physics_characteristics": {
+            "age": 20,
+            "height": 1.70,
+            "weight": 70,
+            "hairColor": "Preto",
+            "eyesColor": "Preto",
+            "shoeSize": 40
+        },
+        "model_info": {
+            "professionalName": "Elisa",
+            "job": "Acompanhante Virtual",
+            "state": "Rio de Janeiro",
+            "description": "Olá, sou Elisa, uma acompanhante virtual pronta para tornar sua experiência única e especial."
+        
+        }
+    },
+    "messages": [
+        {
+            "id": 1,
+            "user": false,
+            "message": "Olá, sou a IA falando"
+        },
+        {
+            "id": 2,
+            "user": true,
+            "message": "Olá, sou o lead falando"
+        }
+    ]
+}
+	
+
