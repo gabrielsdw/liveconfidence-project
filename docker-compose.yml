@@ -2,7 +2,7 @@ services:
     api:
       build: .
       restart: always
-      command: bash -c "python manage.py makemigrations && python manage.py migrate && uwsgi --http :8000 --module core.wsgi --chmod-socket=666"
+      command: bash -c "python manage.py makemigrations && python manage.py migrate && uwsgi --ini liveconfidence-project-uwsgi.ini"
       volumes:
         - .:/code
       ports:
