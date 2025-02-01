@@ -11,7 +11,7 @@ from . import serializers
 
 class ChatbotWebhookApiView(APIView):
     
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         self.__callmebot_service = CallMeBot()
         super().__init__(**kwargs)
 
@@ -53,7 +53,7 @@ class ChatbotWebhookApiView(APIView):
             CHAT HISTORY - {id}
             {format_chat_history(list(serializer.validated_data.get('chat_history')))}
             """
-                
+            print(chat_history_message)
             agent_message = f"""
             AGENT RESPONSE - {id}
             {response.get('agent_response')}
