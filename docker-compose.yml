@@ -1,10 +1,49 @@
-services:
-    api:
-      build: .
-      restart: always
-      command: bash -c "python manage.py makemigrations && python manage.py migrate && uwsgi --ini liveconfidence-project-uwsgi.ini"
-      volumes:
-        - .:/code
-      ports:
-        - "8000:8000"
+services:  
+  db:  
+    image: postgres:latest  
+    container_name: postgres_db  
+    volumes:  
+      - postgres_data:/var/lib/postgresql/data  
+    env_file:  
+      - .env  
+    environment:  
+      POSTGRES_DB: ${DB_NAME}  
+      POSTGRES_USER: ${DB_USER}  
+      POSTGRES_PASSWORD: ${DB_PASSWORD}  
+    ports:  
+      - "5432:5432"  
+    networks:  
+      - app_network  
   
+  web:  
+    build: .  
+    container_name: django_app  
+    command: >  
+      sh -c "./wait-for-it.sh db:5432 -- python manage.py makemigrations &&  
+             python manage.py migrate &&  
+             gunicorn core.wsgi:application --bind 0.0.0.0:8000"  
+    env_file:  
+      - .env  
+    depends_on:  
+      - db  
+    networks:  
+      - app_network  
+  
+  nginx:  
+    image: nginx:latest  
+    container_name: nginx_server  
+    volumes:  
+      - ./nginx.conf:/etc/nginx/nginx.conf  
+    ports:  
+      - "80:80"  
+    depends_on:  
+      - web  
+    networks:  
+      - app_network  
+  
+networks:  
+  app_network:  
+    driver: bridge  
+  
+volumes:  
+  postgres_data:
