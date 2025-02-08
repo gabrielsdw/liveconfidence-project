@@ -6,3 +6,5 @@ characteristic_parser_chain = llms.GPT4o | StrOutputParser()
 
 agent_prompt_template = prompts.AGENT_PROMPT
 agent_chain = llms.GPT4o | agent_prompt_template | StrOutputParser()
+
+test_chain = llms.GPT4o | StrOutputParser()

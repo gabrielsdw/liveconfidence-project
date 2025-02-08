@@ -1,4 +1,4 @@
-from langchain.callbacks.base import BaseCallbackHandler
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.agents import AgentExecutor, create_react_agent
 from .states import ChatbotState
 from .utils import get_tools, format_chat_history
@@ -47,3 +47,27 @@ def characteristics_parser_node(state: ChatbotState) -> dict:
 
     response = chain.invoke(formatted_prompt)
     return {"final_response": response}
+
+def test_node(state: ChatbotState) -> dict:
+    chain = chains.test_chain
+
+    chat_history = f"""
+    <Histórico de conversas>
+    {format_chat_history(state['chat_history'])}
+    </Histórico de conversas>    
+    """
+
+
+    messages = [
+        SystemMessage(
+            content=prompts.TEST_PROMPT
+        ),
+        HumanMessage(
+            content=chat_history
+        )
+    ]
+    print(messages)
+
+    response = chain.invoke(messages)
+    print(response)
+    return {'final_response': response}

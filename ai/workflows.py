@@ -8,13 +8,18 @@ class ChatBotWorkflow:
         self._workflow =  StateGraph(states.ChatbotState)
    
     def _create_workflow(self) -> None:
-        self._workflow.add_node('agent', nodes.agent_node)
-        self._workflow.add_node('characteristic_parser', nodes.characteristics_parser_node)
-        
-        self._workflow.add_edge(START, 'agent')
+        #self._workflow.add_node('agent', nodes.agent_node)
+        #self._workflow.add_node('characteristic_parser', nodes.characteristics_parser_node)
+        self._workflow.add_node('test', nodes.test_node)
+
+        """self._workflow.add_edge(START, 'agent')
         self._workflow.add_edge('agent', 'characteristic_parser')
         self._workflow.add_edge('characteristic_parser', END)
-        
+        """
+        self._workflow.add_edge(START, 'test'),
+        self._workflow.add_edge('test', END)
+
+
     def _get_workflow(self) -> StateGraph:
         self._create_workflow()
         return self._workflow.compile()
