@@ -11,9 +11,8 @@ def format_chat_history(chat_history: list[dict]) -> str:
         if is_user:
             text = f"Usuário: {message}"
         else:
-            text = f"Modelo: {message}" 
+            text = f"Você: {message}" 
         result += f"\n - {text}"
-    # result = result.replace('\n', '', 1)
     return result
 
 def format_dict(data: dict) -> str:

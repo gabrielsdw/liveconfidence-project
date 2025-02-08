@@ -1,73 +1,64 @@
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain.agents import AgentExecutor, create_react_agent
+from .schemas import MostMessagesResponse
 from .states import ChatbotState
-from .utils import get_tools, format_chat_history
+from .utils import format_chat_history
 from . import llms, prompts, chains
 
-
-def agent_node(state: ChatbotState) -> dict:
-    tools = get_tools()
-
-    agent = create_react_agent(llms.GPT4o, tools, prompts.AGENT_PROMPT)
-
-    agent_executor = AgentExecutor(
-        agent=agent,
-        tools=tools,
-        verbose=True
-    )
-    
-    chat_history = state["chat_history"]
-    
-    input = chat_history.pop()
-
-    try: 
-        response = agent_executor.invoke({
-            "chat_history": chat_history,
-            "input": input,
-        })
-
-        return {"agent_response": response.get('output')}
-
-    except (ValueError) as e:
-        return {"agent_response": "Resposta sexual, apenas continue a conversa e ignore"}
-            
-def characteristics_parser_node(state: ChatbotState) -> dict:
-    chain = chains.characteristic_parser_chain
-
-    formatted_prompt = prompts.CHARACTERISCT_PARSER_PROMPT.format(
-        response=state['agent_response'],
-        model_info=state['model_info'],
-        model_physics_characteristics=state['model_physics_characteristics'],
-        chat_history=format_chat_history(state['chat_history'])
-    )
-    print("------------------------------ PROMPT FORMATADO ------------------------------")
-    print(formatted_prompt)
-    print("------------------------------ END PROMPT ------------------------------")
-    print('\n'*5)
-
-    response = chain.invoke(formatted_prompt)
-    return {"final_response": response}
-
-def test_node(state: ChatbotState) -> dict:
-    chain = chains.test_chain
+def chatbot_node(state: ChatbotState) -> dict:
+    chain = chains.chatbot_chain
 
     chat_history = f"""
     <Histórico de conversas>
     {format_chat_history(state['chat_history'])}
     </Histórico de conversas>    
     """
-
-
     messages = [
         SystemMessage(
-            content=prompts.TEST_PROMPT
+            content=prompts.CHATBOT_PROMPT
         ),
         HumanMessage(
             content=chat_history
         )
     ]
-    print(messages)
-
     response = chain.invoke(messages)
-    print(response)
     return {'final_response': response}
+
+def response_splitter_node(state: ChatbotState) -> dict:
+    structured_llm = llms.GPT4o.with_structured_output(MostMessagesResponse)
+
+    human_message = f"""
+    <mensagem>
+    f{state['final_response']}
+    </mensagem>
+    """
+
+    messages = [
+        SystemMessage(
+            content="""
+                Responda SEMPRE no formato JSON.  
+                Sua resposta deve conter apenas um objeto JSON com a chave `"ai_splitted_response"`, que deve ser uma lista simples de strings.  
+
+                Formato esperado:  
+                ```json
+                {
+                    "ai_splitted_response": [
+                        "Mensagem 1",
+                        "Mensagem 2",
+                        "Mensagem 3"
+                    ]
+                }
+
+                Regras:
+                - Se a mensagem for curta e clara, mantenha-a como está.
+                - Se a mensagem for muito longa, divida-a em partes menores para melhorar a legibilidade, sem modificar o conteúdo.
+                - Preserve o sentido original das frases ao dividir.
+                - Não adicione outras chaves ou estruturas aninhadas.
+                - Apenas devolva um JSON válido seguindo esse formato.
+            """
+        ),
+        HumanMessage(
+            content= human_message
+        )
+    ]
+    response = structured_llm.invoke(messages)
+    return {'splitted_response': response}

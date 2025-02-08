@@ -1,4 +1,3 @@
-from random import randint
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -47,43 +46,11 @@ class ChatbotWebhookApiView(APIView):
                 "model_info": model_info_formatted ,
                 "model_physics_characteristics": model_physics_characteristics_formatted,
             })
-            id = randint(0, 100)
-
-            chat_history_message = f"""
-            CHAT HISTORY - {id}
-            {format_chat_history(list(serializer.validated_data.get('chat_history')))}
-            """
-            print(chat_history_message)
-            agent_message = f"""
-            AGENT RESPONSE - {id}
-            {response.get('agent_response')}
-               
-            """
-            final_response_message = f"""
-            FINAL RESPONSE - {id}           
-            
-            {response.get('final_response')}                
-            
-            """
-
-            self.__callmebot_service.send_message(chat_history_message)
-            self.__callmebot_service.send_message(agent_message)
-            self.__callmebot_service.send_message(final_response_message)
-
-            print("------------------------------ AGENT RESPONSE ------------------------------")
-            print(response.get('agent_response'))
-            print("------------------------------ END AGENT RESPONSE ------------------------------")
-            print('\n'*5)
-
-            print("------------------------------ FINAL RESPONSE ------------------------------")            
-            response = response.get('final_response')
-            print(response)
-            print("------------------------------ END FINAL RESPONSE ------------------------------")
-            print('\n'*5)
             return Response(
                 {
                     "data": {
-                        "ai_response": str(response)
+                        "ai_response": str(response.get('final_response')),
+                        "ai_splitted_response": response.get('splitted_response').messages
                     } 
                 },
                 status=status.HTTP_200_OK
