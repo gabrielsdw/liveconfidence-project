@@ -50,7 +50,6 @@ class ChatbotWebhookApiView(APIView):
                 {
                     "data": {
                         "ai_response": str(response.get('final_response')),
-                        "ai_splitted_response": response.get('splitted_response').messages
                     } 
                 },
                 status=status.HTTP_200_OK

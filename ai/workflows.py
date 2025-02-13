@@ -13,9 +13,8 @@ class ChatBotWorkflow:
 
     def _add_edges(self) -> None:
         self._workflow.add_edge(START, 'chatbot'),
-        self._workflow.add_edge('chatbot', 'response_splitter')
-        self._workflow.add_edge('response_splitter', END)
-
+        self._workflow.add_edge('chatbot', END)
+        
     def _create_workflow(self) -> None:
         self._add_nodes()
         self._add_edges()
