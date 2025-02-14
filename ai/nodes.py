@@ -1,7 +1,7 @@
 from langchain_core.messages import HumanMessage, SystemMessage
 from .schemas import MostMessagesResponse
 from .states import ChatbotState
-from .utils import format_chat_history
+from .utils import format_chat_history, format_dict
 from . import llms, prompts, chains
 
 def chatbot_node(state: ChatbotState) -> dict:
@@ -12,9 +12,16 @@ def chatbot_node(state: ChatbotState) -> dict:
     {format_chat_history(state['chat_history'])}
     </Histórico de conversas>    
     """
+
+    system_prompt = prompts.CHATBOT_PROMPT_2.format(
+        model_physics_characteristics=state['model_physics_characteristics'],
+        model_info=state['model_info']
+    )
+    print(system_prompt)
+    print(chat_history)
     messages = [
         SystemMessage(
-            content=prompts.CHATBOT_PROMPT
+            content=system_prompt
         ),
         HumanMessage(
             content=chat_history
