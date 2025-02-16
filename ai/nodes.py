@@ -46,8 +46,9 @@ def message_splitter_node(state: ChatbotState) -> dict:
         )
     ]
     response = chain.invoke(messages)
+    print(response)
     try:
         json_response = json.loads(str(response))
+        return {'splitted_final_response': json_response.get('messages')}
     except:
         return {'splitted_final_response': {'messages': []}}
-    return {'splitted_final_response': json_response}
