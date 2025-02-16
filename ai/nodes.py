@@ -7,12 +7,7 @@ import json
 def chatbot_node(state: ChatbotState) -> dict:
     chain = chains.chatbot_chain
 
-    chat_history = f"""
-    <Histórico de conversas>
-    {format_chat_history(state['chat_history'])}
-    </Histórico de conversas>    
-    """
-
+    chat_history = f'<Histórico de conversas>{format_chat_history(state['chat_history'])}\n</Histórico de conversas>'
     system_prompt = prompts.CHATBOT_PROMPT_2.format(
         model_physics_characteristics=state['model_physics_characteristics'],
         model_info=state['model_info']
@@ -31,12 +26,7 @@ def chatbot_node(state: ChatbotState) -> dict:
 def message_splitter_node(state: ChatbotState) -> dict:
     chain = chains.message_splitter_chain
 
-    message = f"""
-    <Mensagem>
-    {str(state['final_response'])}
-    </Mensagem>
-    """
-
+    message = f'<Mensagem>\n{str(state['final_response'])}\n</Mensagem>'
     messages = [
         SystemMessage(
             content=prompts.MESSAGE_SPLITTER_PROMPT
@@ -45,10 +35,9 @@ def message_splitter_node(state: ChatbotState) -> dict:
             content=message
         )
     ]
-    response = chain.invoke(messages)
-    print(response)
+    response = str(chain.invoke(messages)).replace('```json', '').replace('```', '')
     try:
-        json_response = json.loads(str(response))
+        json_response = json.loads(response)
         return {'splitted_final_response': json_response.get('messages')}
     except:
         return {'splitted_final_response': {'messages': []}}
